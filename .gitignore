@@ -1,0 +1,123 @@
+# Environment and secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+.cache
+nosetests.xml
+coverage.xml
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Output directories
+output/
+output_*/
+instrumented_output/
+test_output/
+
+# Generated telemetry utility files (created during instrumentation)
+_telemetry_utils.py
+_telemetry_utils.js
+_telemetry_utils.mjs
+_telemetry_utils.cjs
+telemetry_utils.go
+
+# Claude Code settings
+.claude/settings.local.json
+
+# Temporary files
+*.tmp
+*.log
+*.pid
+/tmp/
+logs/
+
+# OS specific
+Thumbs.db
+.DS_Store
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+go.work
+go.work.sum
+
+# Go test artifacts
+*.test
+*.out
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm
+.yarn/
+
+# Compiled binaries (from examples)
+examples/**/test_*
+examples/**/calculator_demo
+examples/**/telemetry_demo
+examples/**/*.exe
+examples/**/main
+
+# Instrumented code output
+*_instrumented.py
+*_instrumented.js
+*_instrumented.go
+
+# Learning system storage (keep in home dir, not repo)
+.telemetry_learnings/
+
+# Telemetry library metadata (tracked in repo, but exclude lock files)
+telemetry_lib/**/library_metadata.json.lock

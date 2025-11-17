@@ -1,0 +1,492 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Static Telemetry Comment Schema",
+  "description": "V3-compatible schema for static function metadata embedded in code comments",
+  "type": "object",
+  "required": [
+    "event_type",
+    "timestamp",
+    "function_name",
+    "file_path",
+    "line_number",
+    "language"
+  ],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "const": "static_function_metadata",
+      "description": "Event type identifier for static analysis"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of analysis"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Unique identifier for this analysis event (UUID v4)"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Groups related functions in same file/module"
+    },
+    "trace_id": {
+      "type": "string",
+      "description": "Groups all functions in same analysis run"
+    },
+    "span_id": {
+      "type": "string",
+      "description": "Unique identifier for this function (hash of signature)"
+    },
+    "function_name": {
+      "type": "string",
+      "description": "Name of the function"
+    },
+    "function_type": {
+      "type": "string",
+      "enum": [
+        "business_logic",
+        "data_processing",
+        "api_handler",
+        "database_access",
+        "utility",
+        "validation",
+        "transformation",
+        "controller",
+        "service",
+        "repository",
+        "middleware",
+        "helper",
+        "factory",
+        "builder",
+        "adapter",
+        "unknown"
+      ],
+      "description": "Categorization of function purpose"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Relative path to the source file"
+    },
+    "line_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Line number where function is defined"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["python", "javascript", "typescript", "go", "java", "ruby", "rust", "c", "cpp"],
+      "description": "Programming language"
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type annotation (if available)"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether parameter is required"
+          },
+          "default": {
+            "description": "Default value (if any)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of parameter"
+          }
+        }
+      },
+      "description": "Function parameters"
+    },
+    "return_type": {
+      "type": "string",
+      "description": "Return type annotation (if available)"
+    },
+    "decorators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Decorators/annotations applied to function"
+    },
+    "is_async": {
+      "type": "boolean",
+      "description": "Whether function is asynchronous"
+    },
+    "is_generator": {
+      "type": "boolean",
+      "description": "Whether function is a generator"
+    },
+    "complexity": {
+      "type": "object",
+      "properties": {
+        "cyclomatic": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Cyclomatic complexity (McCabe)"
+        },
+        "cognitive": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Cognitive complexity"
+        },
+        "lines_of_code": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Lines of code in function body"
+        },
+        "max_nesting": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum nesting depth"
+        }
+      },
+      "description": "Complexity metrics"
+    },
+    "data_flow": {
+      "type": "object",
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Input parameter name"
+              },
+              "source": {
+                "type": "string",
+                "enum": ["user_request", "database", "config", "external_api", "file", "environment", "computed", "unknown"],
+                "description": "Origin of input data"
+              },
+              "validation": {
+                "type": "string",
+                "description": "Validation applied (e.g., 'non_empty_list', 'range_0_to_1')"
+              },
+              "sanitization": {
+                "type": "string",
+                "description": "Sanitization applied (e.g., 'sql_escape', 'html_encode')"
+              }
+            }
+          },
+          "description": "Input data flow"
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Output variable name"
+              },
+              "type": {
+                "type": "string",
+                "description": "Output type"
+              },
+              "destination": {
+                "type": "string",
+                "enum": ["response", "database", "file", "external_api", "cache", "queue", "log", "return", "unknown"],
+                "description": "Where output goes"
+              }
+            }
+          },
+          "description": "Output data flow"
+        },
+        "side_effects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["log", "database_write", "file_write", "api_call", "cache_write", "queue_publish", "email", "notification", "state_change"],
+                "description": "Type of side effect"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of side effect"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target of side effect (e.g., table name, API endpoint)"
+              }
+            }
+          },
+          "description": "Side effects (state changes)"
+        }
+      },
+      "description": "Data flow analysis"
+    },
+    "calls": {
+      "type": "object",
+      "properties": {
+        "outgoing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "type": "string",
+                "description": "Name of called function"
+              },
+              "module": {
+                "type": "string",
+                "description": "Module/package of called function"
+              },
+              "line": {
+                "type": "integer",
+                "description": "Line number of call"
+              },
+              "conditional": {
+                "type": "boolean",
+                "description": "Whether call is conditional"
+              }
+            }
+          },
+          "description": "Functions called by this function"
+        },
+        "incoming": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["function"],
+            "properties": {
+              "function": {
+                "type": "string",
+                "description": "Name of calling function"
+              },
+              "module": {
+                "type": "string",
+                "description": "Module/package of calling function"
+              },
+              "estimated": {
+                "type": "boolean",
+                "description": "Whether this is estimated (vs confirmed)"
+              }
+            }
+          },
+          "description": "Functions that call this function"
+        }
+      },
+      "description": "Call graph relationships"
+    },
+    "error_handling": {
+      "type": "object",
+      "properties": {
+        "raises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Exception type (e.g., ValueError, TypeError)"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Condition that triggers exception"
+              },
+              "line": {
+                "type": "integer",
+                "description": "Line number where raised"
+              },
+              "message": {
+                "type": "string",
+                "description": "Exception message"
+              }
+            }
+          },
+          "description": "Exceptions that can be raised"
+        },
+        "catches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Exception type caught"
+              },
+              "action": {
+                "type": "string",
+                "enum": ["reraise", "log", "ignore", "transform", "retry", "fallback"],
+                "description": "How exception is handled"
+              },
+              "line": {
+                "type": "integer",
+                "description": "Line number of catch block"
+              }
+            }
+          },
+          "description": "Exceptions caught by this function"
+        },
+        "validates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["param", "check"],
+            "properties": {
+              "param": {
+                "type": "string",
+                "description": "Parameter being validated"
+              },
+              "check": {
+                "type": "string",
+                "description": "Validation check (e.g., 'non_empty', 'range_check')"
+              },
+              "on_failure": {
+                "type": "string",
+                "description": "What happens if validation fails"
+              }
+            }
+          },
+          "description": "Input validation performed"
+        }
+      },
+      "description": "Error handling analysis"
+    },
+    "classifiers": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "description": "Human-readable description of function purpose (1 sentence)"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "business_logic",
+            "data_processing",
+            "api_handler",
+            "database_access",
+            "utility",
+            "validation",
+            "transformation",
+            "controller",
+            "service",
+            "repository",
+            "middleware",
+            "helper",
+            "factory",
+            "builder",
+            "adapter"
+          ],
+          "description": "Primary category"
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "More specific categorization (e.g., 'financial_calculation')"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Searchable tags (e.g., ['billing', 'tax', 'critical'])"
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Business criticality"
+        },
+        "data_sensitivity": {
+          "type": "string",
+          "enum": ["pii", "pci", "phi", "confidential", "internal", "public"],
+          "description": "Data sensitivity level"
+        },
+        "performance_profile": {
+          "type": "string",
+          "enum": ["fast", "moderate", "slow", "io_bound", "cpu_bound", "memory_intensive"],
+          "description": "Expected performance characteristics"
+        }
+      },
+      "description": "Function classifiers for searchability and organization"
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp (from git)"
+        },
+        "caller_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of places that call this function"
+        },
+        "test_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Test coverage percentage"
+        },
+        "is_public_api": {
+          "type": "boolean",
+          "description": "Whether this is part of public API"
+        },
+        "is_deprecated": {
+          "type": "boolean",
+          "description": "Whether function is deprecated"
+        },
+        "deprecation_reason": {
+          "type": "string",
+          "description": "Reason for deprecation (if deprecated)"
+        },
+        "replacement": {
+          "type": "string",
+          "description": "Recommended replacement function (if deprecated)"
+        }
+      },
+      "description": "Usage and lifecycle metadata"
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "requires_auth": {
+          "type": "boolean",
+          "description": "Whether function requires authentication"
+        },
+        "requires_authorization": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required permissions/roles"
+        },
+        "input_sanitization": {
+          "type": "boolean",
+          "description": "Whether inputs are sanitized"
+        },
+        "sql_injection_risk": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high"],
+          "description": "SQL injection risk level"
+        },
+        "xss_risk": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high"],
+          "description": "XSS risk level"
+        }
+      },
+      "description": "Security analysis"
+    }
+  }
+}
